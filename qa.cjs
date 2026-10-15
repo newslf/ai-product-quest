@@ -1,17 +1,18 @@
-const { chromium } = require('C:/Users/fangfang22.liu/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 const fs = require('node:fs/promises');
 const path = require('node:path');
+const baseUrl = (process.env.QUEST_BASE_URL || 'http://127.0.0.1:4173').replace(/\/$/, '');
 
 (async () => {
   const output = path.join(__dirname,'qa-artifacts');
   await fs.mkdir(output,{recursive:true});
-  const browser = await chromium.launch({headless:true,executablePath:'C:/Users/fangfang22.liu/AppData/Local/ms-playwright/chromium_headless_shell-1228/chrome-headless-shell-win64/chrome-headless-shell.exe'});
+  const browser = await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ? {executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE} : {})});
   const context = await browser.newContext({viewport:{width:1440,height:1100},deviceScaleFactor:1});
   const page = await context.newPage();
   const errors=[];
   page.on('pageerror',error=>errors.push(error.message));
-  const response=await page.goto('http://127.0.0.1:4173',{waitUntil:'networkidle'});
+  const response=await page.goto(baseUrl+'/',{waitUntil:'networkidle'});
   assert.equal(response.status(),200);
   assert.equal(await page.locator('.station').count(),6);
   assert.equal(await page.evaluate(()=>window.QUEST_DATA.chapters.flatMap(c=>c.lessons).length),18);
@@ -32,7 +33,7 @@ const path = require('node:path');
   // Each mission gates completion on evidence, both correct decisions, and a reflection.
   const quests=await page.evaluate(()=>window.QUEST_DATA.quests.map(q=>({id:q.id,diagnosis:q.question.answer,transfer:q.transfer.answer})));
   for(const quest of quests){
-    await page.goto('http://127.0.0.1:4173/#quest/'+quest.id);
+    await page.goto(baseUrl+'/#quest/'+quest.id);
     await page.locator('[data-action="quest-next"]').click();
     assert.equal(await page.locator('#evidence-next').isDisabled(),true);
     for(let i=0;i<3;i++)await page.locator('details[data-evidence="'+i+'"] summary').click();
@@ -54,7 +55,7 @@ const path = require('node:path');
     assert(await page.getByText('这次判断，有迹可循。').isVisible());
   }
   // Expected boundary values for the fixed confusion-matrix sample.
-  await page.goto('http://127.0.0.1:4173/#labs');
+  await page.goto(baseUrl+'/#labs');
   await page.locator('#threshold').fill('0.95');
   assert((await page.locator('#matrix-output').innerText()).includes('17%'));
   await page.locator('#threshold').fill('0.05');
@@ -70,7 +71,7 @@ const path = require('node:path');
   assert((await page.locator('.sim-answer').innerText()).includes('证据不足'));
   await page.screenshot({path:path.join(output,'desktop-lab.png'),fullPage:true});
   // Free text is rendered as text, not HTML; answers and self checks persist.
-  await page.goto('http://127.0.0.1:4173/#interview');
+  await page.goto(baseUrl+'/#interview');
   await page.locator('#interview-answer').fill('我负责用户任务定义与效果验证，先做规则基线。<img src=x onerror="window.injected=1">');
   await page.locator('[data-action="interview-next"]').click();
   await page.locator('[data-action="interview-next"]').click();
@@ -78,7 +79,7 @@ const path = require('node:path');
   assert.equal(await page.locator('.followup').count(),3);
   await page.locator('[data-rubric="0"]').check();
   await page.locator('[data-action="interview-save"]').click();
-  await page.goto('http://127.0.0.1:4173/#journal');
+  await page.goto(baseUrl+'/#journal');
   assert.equal(await page.evaluate(()=>window.injected),undefined);
   assert((await page.locator('main').innerText()).includes('<img src=x'));
   // Wrong-answer review is an independent step; export is usable JSON.
@@ -95,7 +96,7 @@ const path = require('node:path');
   // Import into a clean context and verify progress and self-written text.
   const restored=await browser.newContext();
   const restoredPage=await restored.newPage();
-  await restoredPage.goto('http://127.0.0.1:4173/#journal');
+  await restoredPage.goto(baseUrl+'/#journal');
   await restoredPage.locator('#import-file').setInputFiles(backupPath);
   await restoredPage.waitForFunction(()=>Object.keys(JSON.parse(localStorage.getItem('ai-product-quest-v1')).quests).length===3);
   assert((await restoredPage.locator('main').innerText()).includes('降低阈值提高召回'));
@@ -105,7 +106,7 @@ const path = require('node:path');
   const mobile=await phone.newPage();
   mobile.on('pageerror',error=>errors.push(error.message));
   for(const route of ['map','quests','labs','interview','journal','quest/supply']){
-    await mobile.goto('http://127.0.0.1:4173/#'+route);
+    await mobile.goto(baseUrl+'/#'+route);
     assert.equal(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'overflow on '+route);
     if(route==='map')await mobile.screenshot({path:path.join(output,'mobile-map.png'),fullPage:true});
   }

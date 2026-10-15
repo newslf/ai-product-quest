@@ -2,3 +2,6 @@ qa-artifacts/
 *.tar.gz
 *.tar
 .sites/
+.env
+.env.*
+node_modules/
