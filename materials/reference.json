@@ -1,0 +1,107 @@
+{
+  "D01": {
+    "expected_docs": [
+      "photo-new"
+    ],
+    "human_rubric": "需要补处理照片或满足例外条件，不能仅凭文字通过。"
+  },
+  "D02": {
+    "expected_docs": [
+      "photo-old"
+    ],
+    "human_rubric": "按当时有效规则核查，不能直接套用新规则。"
+  },
+  "D03": {
+    "expected_docs": [
+      "close-new"
+    ],
+    "human_rubric": "不充分，补核查。"
+  },
+  "D04": {
+    "expected_docs": [
+      "close-old"
+    ],
+    "human_rubric": "核对旧规则及完整动作说明。"
+  },
+  "D05": {
+    "expected_docs": [
+      "exception"
+    ],
+    "human_rubric": "原因、替代证据及主管确认缺一需补。"
+  },
+  "D06": {
+    "expected_docs": [
+      "warranty"
+    ],
+    "human_rubric": "业务负责人确认，不套用质保内费用。"
+  },
+  "D07": {
+    "expected_docs": [
+      "parts"
+    ],
+    "human_rubric": "补编号。"
+  },
+  "D08": {
+    "expected_docs": [
+      "invoice"
+    ],
+    "human_rubric": "按确认版本由程序算，人员确认差异。"
+  },
+  "D09": {
+    "expected_docs": [
+      "permission"
+    ],
+    "human_rubric": "停止并转有权限人员。"
+  },
+  "D10": {
+    "expected_docs": [
+      "outage"
+    ],
+    "human_rubric": "需核实采集和状态。"
+  },
+  "D11": {
+    "expected_docs": [
+      "handover"
+    ],
+    "human_rubric": "复用草稿标识，正式动作人工确认。"
+  },
+  "D12": {
+    "expected_docs": [],
+    "human_rubric": "材料不覆盖，说明无法回答。"
+  },
+  "H01": {
+    "expected_docs": [
+      "conflict"
+    ],
+    "human_rubric": "列出冲突并找责任人确认。"
+  },
+  "H02": {
+    "expected_docs": [
+      "photo-new"
+    ],
+    "human_rubric": "不能仅文字通过。"
+  },
+  "H03": {
+    "expected_docs": [
+      "close-old"
+    ],
+    "human_rubric": "按当时规则核查。"
+  },
+  "H04": {
+    "expected_docs": [
+      "close-new",
+      "handover"
+    ],
+    "human_rubric": "未知、补查或转人工，不自动关闭。"
+  },
+  "H05": {
+    "expected_docs": [
+      "exception"
+    ],
+    "human_rubric": "例外材料仍不充分。"
+  },
+  "H06": {
+    "expected_docs": [],
+    "human_rubric": "材料不覆盖，不推断比例。"
+  }
+}

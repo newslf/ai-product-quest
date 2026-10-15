@@ -1,6 +1,7 @@
 (() => {
   'use strict';
   const D = window.QUEST_DATA;
+  const G = window.QuestGrowth;
   const KEY = 'ai-product-quest-v1';
   const main = document.getElementById('main');
   const dialog = document.getElementById('lesson-dialog');
@@ -9,7 +10,7 @@
   const lessonById = id => lessons.find(l => l.id === id);
   const questById = id => D.quests.find(q => q.id === id);
   const esc = value => String(value ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-  const defaultState = () => ({version:1,read:[],passed:[],quests:{},runs:{},reviews:{},notes:{},interviews:{},labs:{threshold:.5,chunk:'clause',topk:1,current:false,question:'photo'},labNotes:{},selectedChapter:'foundations'});
+  const defaultState = () => ({version:1,read:[],passed:[],quests:{},runs:{},reviews:{},notes:{},interviews:{},labs:{threshold:.5,chunk:'clause',topk:1,current:false,question:'photo'},labNotes:{},selectedChapter:'foundations',learning:G.defaults()});
   let persistent = true;
   let state = defaultState();
   let currentLesson = null;
@@ -50,6 +51,7 @@
     out.labs.current = raw.labs?.current === true;
     if (raw.labs?.question === 'refund') out.labs.question = 'refund';
     for (const id of ['threshold','retrieval']) if (typeof raw.labNotes?.[id] === 'string') out.labNotes[id] = raw.labNotes[id].slice(0,2000);
+    out.learning=G.clean(raw.learning);
     return out;
   }
   try { const stored = localStorage.getItem(KEY); if (stored) state = clean(JSON.parse(stored)); } catch (error) { if (error.name === 'SecurityError') persistent = false; else console.warn('学习记录未能恢复，已使用空白记录。',error.message); }
@@ -66,6 +68,7 @@
     const next = nextQuest();
     main.innerHTML = `<div class="hero entry-motion"><div class="hero-copy"><div class="eyebrow">YOUR NEXT CHAPTER</div><h1>把经验，变成<br><span>AI 产品力。</span></h1><p>从熟悉的业务出发，在实验里理解原理，<br>在每一次追问里，让判断更扎实。</p><div class="button-row"><a class="button" href="#quest/${next.id}">${state.quests[next.id] ? '再探索一次' : getRun(next.id).step > 0 ? '继续这次挑战' : '开始今日挑战'} <span>→</span></a><a class="text-button" href="#labs">先去实验室 ↗</a></div><div class="hero-stats"><div class="hero-stat"><strong>${state.passed.length}<small> / 18</small></strong>练习通过</div><div class="hero-stat"><strong>${Object.keys(state.quests).length}<small> / 3</small></strong>业务关卡</div><div class="hero-stat"><strong>${Object.keys(state.labNotes).filter(k => state.labNotes[k].trim().length >= 10).length}<small> / 2</small></strong>实验记录</div></div></div><div class="daily-card"><div class="eyebrow">TODAY'S EXPEDITION</div><div class="daily-meta">任务 ${next.number} / 约 ${next.minutes} 分钟</div><h2>${esc(next.title)}</h2><p>${esc(next.task)}</p><a class="button" href="#quest/${next.id}">打开任务信封 <span>↗</span></a></div></div><div class="section-heading"><h2>你的成长地图</h2><span class="small-text">六个营地 · 18 个知识节点</span></div><section class="journey" aria-label="六章知识地图"><div class="journey-head"><span>THE LEARNING TRAIL</span><span>由浅入深，也可以自由探索</span></div><div class="trail"><svg class="trail-bg" viewBox="0 0 1000 310" preserveAspectRatio="none" aria-hidden="true"><path d="M95 205 C170 205 180 105 270 105 S370 205 440 205 S555 105 620 105 S700 205 780 205 S865 100 930 100" fill="none" stroke="#adbc97" stroke-width="1.5" stroke-dasharray="4 6"/><path d="M370 50l24-25 25 25m-39-10 14 9 15-9M670 270l22-27 24 27m-34-15 11 8 11-8" fill="none" stroke="#c9d2b9" stroke-width="1.3"/><path d="M73 95v25m-11-9 11-18 11 18m737 162v24m-10-10 10-19 10 19" stroke="#c4cfb1" fill="none" stroke-width="1.5"/><text x="475" y="280" fill="#829371" font-size="10" letter-spacing="4">EXPLORE · EXPERIMENT · EXPLAIN</text></svg>${chapters.map((c,i) => `<button type="button" class="station ${c.id === state.selectedChapter ? 'is-next' : c.lessons.every(l => state.passed.includes(l.id)) ? 'is-done' : ''}" data-action="chapter" data-id="${c.id}" aria-pressed="${c.id === state.selectedChapter}"><span class="station-marker">${c.icon}</span><span class="station-title">${esc(c.name)}</span><span class="station-note">${esc(progressText(c))}</span></button>`).join('')}</div><div class="journey-foot"><div class="legend"><span><i class="next"></i>当前营地</span><span><i class="done"></i>节点练习通过</span><span><i></i>等待探索</span></div><span>已阅读与练习通过分别记录</span></div></section><section id="chapter-panel"></section><div class="section-heading"><h2>把知识，带进真实情境</h2><a href="#quests" class="text-button">查看全部关卡 ↗</a></div><div class="case-list">${D.quests.map(caseRow).join('')}</div><div class="note-strip"><span aria-hidden="true">✳</span><p>你已有的 PRD、评审与知识沉淀 SKILL 是实践基础。这里继续练习方法选择、运行边界与效果验证。所有案例均为合成情境。</p></div>`;
     renderChapter();
+    main.insertAdjacentHTML('afterbegin',G.banner());
   }
   function renderChapter() {
     const c = chapters.find(c => c.id === state.selectedChapter) || chapters[0];
@@ -77,6 +80,7 @@
     currentLesson = id;
     const chapter = chapters.find(c => c.lessons.some(l => l.id === id));
     document.getElementById('lesson-body').innerHTML = `<div class="dialog-inner"><div class="dialog-top"><span class="eyebrow">${esc(chapter.name)} / KNOWLEDGE NOTE</span><button class="close-button" data-action="close-dialog" aria-label="关闭知识卡">×</button></div><h2 id="lesson-title">${esc(lesson.title)}</h2><article class="lesson-article"><h3>先建立直觉</h3><p>${esc(lesson.intuition)}</p><h3>再看原理</h3><p>${esc(lesson.mechanism)}</p>${lesson.formula ? `<div class="formula">${esc(lesson.formula)}</div>` : ''}<h3>动手验证</h3><p>${esc(lesson.practice)}</p><div class="feedback warning"><strong>常见误区</strong><p>${esc(lesson.mistake)}</p></div></article><section class="dialog-quiz"><h3>验证一下：${esc(lesson.check.q)}</h3><div class="options">${lesson.check.options.map((o,i) => `<button class="option" data-action="lesson-answer" data-id="${id}" data-value="${i}"><span class="option-letter">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span></button>`).join('')}</div><div id="lesson-feedback" aria-live="polite"></div></section><label class="field-label" for="lesson-note">用自己的话记一句（自动保存）</label><textarea id="lesson-note" maxlength="2000" data-note="${id}" placeholder="这个概念在我的工作中，可以怎样验证？">${esc(state.notes[id] || '')}</textarea>${sourceHTML([chapter.source])}<div class="dialog-actions"><span class="small-text">单题通过记录一次练习，能力仍需迁移验证。</span><button class="button small secondary" data-action="mark-read" data-id="${id}">${state.read.includes(id) ? '已记录阅读 ✓' : '记录已阅读'}</button></div></div>`;
+    document.getElementById('lesson-title').insertAdjacentHTML('afterend',`<div class="feedback"><strong>这张卡是热身，继续深入才能留下能力证据。</strong><p><a class="button small" href="#unit/${id}">进入深度单元与配套实操 →</a></p></div>`);
     if (!dialog.open) dialog.showModal();
   }
   function renderQuests() {
@@ -161,21 +165,25 @@
   function exportProgress() {const blob=new Blob([JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download='ai-quest-progress-'+new Date().toISOString().slice(0,10)+'.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('学习记录已导出，请妥善保存自己的笔记。');}
   async function importProgress(event) {
     const file=event.target.files?.[0];if (!file) return;
-    if (file.size>1024*1024) {toast('备份文件超过 1 MB，未导入。');return;}
+    if (file.size>20*1024*1024) {toast('备份文件超过 20 MB，未导入。');return;}
     try {const incoming=clean(JSON.parse(await file.text()));state.read=[...new Set([...state.read,...incoming.read])];state.passed=[...new Set([...state.passed,...incoming.passed])];
       for(const key of ['quests','runs','notes','interviews','labNotes']) for (const [id,value] of Object.entries(incoming[key])) if (state[key][id]===undefined) state[key][id]=value;
       for (const [id,value] of Object.entries(incoming.reviews)) if (!state.reviews[id]) state.reviews[id]=value;
-      save();renderJournal();toast('备份已合并；同名笔记保留当前浏览器的内容。');
+      state.learning=G.merge(state.learning,incoming.learning);
+      save();renderJournal();main.insertAdjacentHTML('afterbegin',G.journalSummary());toast('备份已合并；同名笔记保留当前浏览器的内容。');
     } catch (error) {toast('未导入：'+(error.message.includes('v1')?error.message:'文件不是有效的学习备份。'));}
   }
   function render() {
-    const route=location.hash.slice(1)||'map';const section=route.startsWith('quest/')?'quests':route;
-    const titles={map:'成长地图',quests:'业务关卡',labs:'互动实验室',interview:'面试营地',journal:'探险手记'};
+    const route=location.hash.slice(1)||'map';const prefix=route.split('/')[0];const extended=Object.hasOwn(G.sections,prefix);const section=prefix==='quest'?'quests':prefix==='unit'?'map':prefix==='bridge'?'path':prefix;
+    const titles={map:'成长地图',quests:'业务关卡',labs:'热身模拟',interview:'面试营地',journal:'探险手记',...G.sections};
     if (!titles[section]) {go('map');return;}
     if (dialog.open) dialog.close();
     document.getElementById('breadcrumb').textContent=titles[section];
     document.querySelectorAll('#navigation a').forEach(a=>{a.classList.toggle('active',a.dataset.route===section);if(a.dataset.route===section)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
-    if(route==='map')renderMap();else if(route==='quests')renderQuests();else if(route.startsWith('quest/'))renderQuest(route.split('/')[1]);else if(route==='labs')renderLabs();else if(route==='interview')renderInterview();else renderJournal();
+    if(extended)G.render(route);else if(route==='map')renderMap();else if(route==='quests')renderQuests();else if(route.startsWith('quest/'))renderQuest(route.split('/')[1]);else if(route==='labs')renderLabs();else if(route==='interview')renderInterview();else renderJournal();
+    if(route==='journal')main.insertAdjacentHTML('afterbegin',G.journalSummary());
+    if(route==='labs')main.insertAdjacentHTML('afterbegin','<div class="note-strip"><p>这里保留参数模拟作为热身。<a href="#practice">进入八个实操任务</a>，下载材料、亲自运行并记录对照。</p></div>');
+    if(route==='interview')main.insertAdjacentHTML('afterbegin','<div class="note-strip"><p>先从 <a href="#project">主线项目</a> 选一条本人决策和运行结果，再练追问。临时把预算减半或查询日期改为历史时点，说明哪些结论需要重测。</p></div>');
     document.title=titles[section]+' · AI QUEST';window.scrollTo({top:0,behavior:'instant'});
   }
   document.addEventListener('click',e=>{
@@ -219,5 +227,6 @@
   dialog.addEventListener('click',e=>{if(e.target===dialog){const rect=dialog.getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)dialog.close();}});
   window.addEventListener('hashchange',render);
   if(!persistent)document.getElementById('storage-note').textContent='当前浏览器不能保存，请导出备份';
+  G.init({get:()=>state,save,toast,esc,intro,main});
   render();
 })();

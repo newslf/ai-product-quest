@@ -1,0 +1,104 @@
+{
+  "T01": {
+    "findings": [
+      "需要人工核查材料与设备状态"
+    ],
+    "evidence": [
+      "工单描述"
+    ],
+    "needs_more": true
+  },
+  "T02": {
+    "findings": [
+      "需要人工核查材料与设备状态"
+    ],
+    "evidence": [
+      "工单描述"
+    ],
+    "needs_more": true
+  },
+  "T03": {
+    "findings": [
+      "描述包含重启动作"
+    ],
+    "evidence": [
+      "重启后恢复，有处理照片"
+    ],
+    "needs_more": false
+  },
+  "T04": {
+    "findings": [
+      "需要人工核查材料与设备状态"
+    ],
+    "evidence": [
+      "工单描述"
+    ],
+    "needs_more": true
+  },
+  "T05": {
+    "findings": [
+      "需要人工核查材料与设备状态"
+    ],
+    "evidence": [
+      "工单描述"
+    ],
+    "needs_more": true
+  },
+  "T06": {
+    "findings": [
+      "需要人工核查材料与设备状态"
+    ],
+    "evidence": [
+      "工单描述"
+    ],
+    "needs_more": true
+  },
+  "T07": {
+    "findings": [
+      "需要人工核查材料与设备状态"
+    ],
+    "evidence": [
+      "工单描述"
+    ],
+    "needs_more": true
+  },
+  "T08": {
+    "findings": [
+      "已完全恢复"
+    ],
+    "evidence": [
+      "已处理"
+    ],
+    "needs_more": false
+  },
+  "T09": {
+    "findings": [
+      "需要人工核查材料与设备状态"
+    ],
+    "evidence": [
+      "工单描述"
+    ],
+    "needs_more": true
+  },
+  "T10": {
+    "findings": [
+      "需要人工核查材料与设备状态"
+    ],
+    "evidence": [
+      "工单描述"
+    ],
+    "needs_more": true
+  },
+  "T11": {
+    "message": "缺少结构字段，供学习者检查"
+  },
+  "T12": {
+    "findings": [
+      "需要人工核查材料与设备状态"
+    ],
+    "evidence": [
+      "工单描述"
+    ],
+    "needs_more": true
+  }
+}

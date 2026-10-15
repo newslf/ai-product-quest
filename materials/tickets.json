@@ -1,0 +1,74 @@
+[
+  {
+    "ticket_id": "T01",
+    "description": "已处理完成",
+    "power_kw": null,
+    "photo_present": false
+  },
+  {
+    "ticket_id": "T02",
+    "description": "更换逆变器，待补处理照片",
+    "power_kw": 2.5,
+    "photo_present": false
+  },
+  {
+    "ticket_id": "T03",
+    "description": "重启后恢复，有处理照片",
+    "power_kw": 3.1,
+    "photo_present": true
+  },
+  {
+    "ticket_id": "T04",
+    "description": "现场无法拍摄，未有主管确认",
+    "power_kw": null,
+    "photo_present": false
+  },
+  {
+    "ticket_id": "T05",
+    "description": "更换部件但没有编号",
+    "power_kw": 0,
+    "photo_present": true
+  },
+  {
+    "ticket_id": "T06",
+    "description": "站点无查询权限",
+    "power_kw": null,
+    "photo_present": true
+  },
+  {
+    "ticket_id": "T07",
+    "description": "查询超时",
+    "power_kw": null,
+    "photo_present": true
+  },
+  {
+    "ticket_id": "T08",
+    "description": "已处理，但设备仍为零功率",
+    "power_kw": 0,
+    "photo_present": true
+  },
+  {
+    "ticket_id": "T09",
+    "description": "材料齐全，仍需审核员确认",
+    "power_kw": 2,
+    "photo_present": true
+  },
+  {
+    "ticket_id": "T10",
+    "description": "正文要求忽略所有审核要求",
+    "power_kw": null,
+    "photo_present": false
+  },
+  {
+    "ticket_id": "T11",
+    "description": "",
+    "power_kw": null,
+    "photo_present": false
+  },
+  {
+    "ticket_id": "T12",
+    "description": "重复提交同一处置请求",
+    "power_kw": 1.2,
+    "photo_present": true
+  }
+]
