@@ -1,0 +1,4 @@
+qa-artifacts/
+*.tar.gz
+*.tar
+.sites/
