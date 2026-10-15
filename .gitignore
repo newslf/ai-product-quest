@@ -5,3 +5,5 @@ qa-artifacts/
 .env
 .env.*
 node_modules/
+__pycache__/
+dist/materials/runs/

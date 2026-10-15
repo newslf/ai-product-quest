@@ -7,9 +7,12 @@
   <meta name="description" content="在业务关卡、互动实验和面试追问中，建立扎实的 AI 产品能力。">
   <title>AI 产品经理闯关营 · AI QUEST</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css">
-  <script src="./content.js" defer></script>
-  <script src="./app.js" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=2.0.0">
+  <link rel="stylesheet" href="./growth.css?v=2.0.0">
+  <script src="./content.js?v=2.0.0" defer></script>
+  <script src="./curriculum.js?v=2.0.0" defer></script>
+  <script src="./growth.js?v=2.0.0" defer></script>
+  <script src="./app.js?v=2.0.0" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳到学习内容</a>
@@ -18,17 +21,21 @@
     <div class="nav-caption">你的成长航线</div>
     <nav id="navigation">
       <a href="#map" data-route="map"><span aria-hidden="true">⌘</span>成长地图</a>
+      <a href="#path" data-route="path"><span aria-hidden="true">⌁</span>十二周路线</a>
+      <a href="#practice" data-route="practice"><span aria-hidden="true">◉</span>实操任务<small>08</small></a>
+      <a href="#project" data-route="project"><span aria-hidden="true">▧</span>主线项目</a>
+      <a href="#review" data-route="review"><span aria-hidden="true">↻</span>复测与证据</a>
       <a href="#quests" data-route="quests"><span aria-hidden="true">⚑</span>业务关卡<small>03</small></a>
-      <a href="#labs" data-route="labs"><span aria-hidden="true">◉</span>互动实验室<small>02</small></a>
+      <a href="#labs" data-route="labs"><span aria-hidden="true">◌</span>热身模拟<small>02</small></a>
       <a href="#interview" data-route="interview"><span aria-hidden="true">◈</span>面试营地</a>
       <a href="#journal" data-route="journal"><span aria-hidden="true">▤</span>探险手记</a>
     </nav>
     <div class="sidebar-bottom"><div class="camp-badge">FIELD NOTES / 001</div><p>学会解释，也学会验证。</p><div class="profile"><span class="avatar">探</span><span>资深产品 · AI 进阶<small>从业务经验出发</small></span></div><small class="storage-note" id="storage-note">学习记录保存在当前浏览器</small></div>
   </aside>
   <div class="app-shell">
-    <header class="topbar"><span id="breadcrumb">成长地图</span><div class="topbar-right"><span class="edition">第一期 · 情境学习</span><button class="text-button" id="export-top" type="button">导出学习记录 <span aria-hidden="true">↗</span></button></div></header>
+    <header class="topbar"><span id="breadcrumb">成长地图</span><div class="topbar-right"><span class="edition">第二期 · 深入机制，亲手验证</span><button class="text-button" id="export-top" type="button">导出学习记录 <span aria-hidden="true">↗</span></button></div></header>
     <main id="main" tabindex="-1"></main>
-    <footer>AI QUEST <span>·</span> 所有业务案例均为合成情境 <span>·</span> v1.0 / 预设教学反馈</footer>
+    <footer>AI QUEST <span>·</span> 合成案例 · 本地学习记录 <span>·</span> v2.0 / 深度单元与实操</footer>
   </div>
   <dialog id="lesson-dialog" aria-labelledby="lesson-title"><div id="lesson-body"></div></dialog>
   <div id="toast" role="status" aria-live="polite"></div>
